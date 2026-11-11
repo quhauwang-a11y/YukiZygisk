@@ -45,6 +45,7 @@ typedef bool (*yz_ksu_get_allow_list_fn)(int *array, u16 length,
 					 u16 *out_length, u16 *out_total,
 					 bool allow);
 
+extern bool yz_skroot_backend;
 extern int yz_root_mask;
 extern int yz_ksu_dispatcher_nr;
 extern enum yz_root_owner yz_root_owner;

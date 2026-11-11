@@ -99,7 +99,7 @@ bool yz_root_policy_allowed;
 static bool yz_root_policy_fallback;
 static bool yz_force_policy_fallback;
 static bool yz_ksu_module_present;
-static bool yz_skroot_backend;
+bool yz_skroot_backend;
 module_param_named(skroot_backend, yz_skroot_backend, bool, 0644);
 MODULE_PARM_DESC(skroot_backend,
 		 "Accept SKRoot as the root owner when no KernelSU/KernelPatch symbols exist.");
