@@ -99,6 +99,10 @@ bool yz_root_policy_allowed;
 static bool yz_root_policy_fallback;
 static bool yz_force_policy_fallback;
 static bool yz_ksu_module_present;
+static bool yz_skroot_backend;
+module_param_named(skroot_backend, yz_skroot_backend, bool, 0644);
+MODULE_PARM_DESC(skroot_backend,
+		 "Accept SKRoot as the root owner when no KernelSU/KernelPatch symbols exist.");
 module_param_named(force_policy_fallback, yz_force_policy_fallback, bool,
 		   0600);
 MODULE_PARM_DESC(force_policy_fallback,
@@ -734,6 +738,18 @@ int yz_host_root_detect(void)
 	if (magisk_seen) {
 		pr_err("yukizygisk: Magisk-only environment is unsupported, refusing to load\n");
 		return -EOPNOTSUPP;
+	}
+
+	/* SKRoot（GhostLock/HotLoad）没有 ksu_syscall_table / ap_* 符号，
+	 * 默认会被判成 no-root 拒绝加载。加这个分支只是为了“允许起来”：
+	 * 不提供 denylist / mount 策略（policy_allowed=false），
+	 * 注入、Zygisk 模块加载这些功能不受影响。 */
+	if (yz_skroot_backend) {
+		yz_root_owner = YZ_ROOT_OWNER_SKROOT;
+		yz_root_policy_allowed = false;
+		yz_root_policy_fallback = true;
+		pr_info("yukizygisk: root owner accepted: SKRoot (forced; no denylist policy)\n");
+		return 0;
 	}
 
 	yz_root_mask |= YZ_ROOT_NON_ROOT;

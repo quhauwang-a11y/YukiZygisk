@@ -28,6 +28,9 @@ enum yz_root_owner {
 	YZ_ROOT_OWNER_NONE = 0,
 	YZ_ROOT_OWNER_KERNELSU = 1,
 	YZ_ROOT_OWNER_KERNELPATCH = 2,
+	/* 由模块参数 skroot_backend=1 强制启用：SKRoot 没有 ksu_/ap_ 符号，
+	 * 只作为“允许加载”的标记，不提供 denylist/umount 策略。 */
+	YZ_ROOT_OWNER_SKROOT = 3,
 };
 
 struct yz_ap_su_profile {
