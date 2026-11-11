@@ -455,8 +455,15 @@ out:
 
 static int yz_auth_check_current(unsigned int role)
 {
-	struct file *exe = yz_get_current_exe_file();
+	struct file *exe;
 	int ret;
+
+	/* SKRoot 模式（skroot_backend=1）：完全没有官方签名链，
+	 * 这里直接放行所有角色校验，改用自备的启动器拉起 zygiskd。 */
+	if (yz_skroot_backend)
+		return 0;
+
+	exe = yz_get_current_exe_file();
 
 	if (!exe)
 		return -EACCES;
