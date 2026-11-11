@@ -44,6 +44,7 @@
 #include "feature/api.h"
 #include "core/auth.h"
 #include "core/control.h"
+#include "host/root_impl.h"
 #include "host/runtime.h"
 #include "uapi/viola.h"
 #include "uapi/viola_health.h"
