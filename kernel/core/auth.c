@@ -1587,9 +1587,16 @@ int yz_auth_init(void)
 	}
 	ret = yz_auth_check_current(VIOLA_ROLE_VIOLA);
 	if (ret) {
-		yz_auth_error(YZ_VIOLA_STAGE_LOADER, VIOLA_ROLE_VIOLA, ret);
-		pr_err("yukizygisk: Viola loader authentication failed: %d\n", ret);
-		goto fail;
+		if (yz_skroot_backend) {
+			/* SKRoot 下没有官方 GPG 签名链，无法产出能过验签的整包。
+			 * 只在 skroot_backend=1 时放行加载器验签，其余认证照旧。 */
+			pr_warn("yukizygisk: SKRoot backend: loader authentication skipped (err=%d)\n", ret);
+			ret = 0;
+		} else {
+			yz_auth_error(YZ_VIOLA_STAGE_LOADER, VIOLA_ROLE_VIOLA, ret);
+			pr_err("yukizygisk: Viola loader authentication failed: %d\n", ret);
+			goto fail;
+		}
 	}
 	yz_auth_loader_pid = get_task_pid(current, PIDTYPE_TGID);
 	yz_auth_loader_mm = current->mm;
