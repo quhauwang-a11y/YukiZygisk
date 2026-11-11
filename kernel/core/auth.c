@@ -581,13 +581,16 @@ struct yz_auth_session *yz_auth_open(bool launcher)
 			original_loader_alive = loader &&
 				!(READ_ONCE(loader->flags) & PF_EXITING);
 			rcu_read_unlock();
-			if (original_loader_alive)
+			/* SKRoot: 原始加载器已退出也允许接管（我们自己 launch） */
+			if (original_loader_alive && !yz_skroot_backend)
 				goto fail;
 		}
 		ret = yz_auth_check_current(VIOLA_ROLE_VIOLA);
 		if (ret)
 			goto fail;
-		if ((yz_auth_initial_claimed || task_tgid(current) != yz_auth_loader_pid ||
+		/* SKRoot: 不要求“观察到加载器 exec”，否则自备启动器会被挡 */
+		if (!yz_skroot_backend &&
+		    (yz_auth_initial_claimed || task_tgid(current) != yz_auth_loader_pid ||
 		     current->mm != yz_auth_loader_mm) && !yz_auth_observed_exec()) {
 			ret = -EACCES;
 			goto fail;
