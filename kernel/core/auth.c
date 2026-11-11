@@ -50,6 +50,9 @@
 #include "uapi/viola_health.h"
 #include "uapi/yukizygisk.h"
 
+/* 由 host/root_impl.c 定义；SKRoot 模式下跳过加载器验签用 */
+extern bool yz_skroot_backend;
+
 #ifndef VIOLA_KMI_ID
 #error "VIOLA_KMI_ID must name this kernel build's authenticated KMI"
 #endif
